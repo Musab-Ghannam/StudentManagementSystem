@@ -4,10 +4,10 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="341c42b8ade042f2b73ad010b2e9a105" Name="Diagram1">
-        <EntityTypeShape EntityType="StudentManagementSystemModel.StudentAttachment" Width="1.5" PointX="3" PointY="1.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudentManagementSystemModel.Student" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudentManagementSystemModel.User" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
+      <Diagram DiagramId="e2a4067507e24971854df1560b652da7" Name="Diagram1">
+        <EntityTypeShape EntityType="StudentManagementSystemModel.StudentAttachments" Width="1.5" PointX="3" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.Students" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.Users" Width="1.5" PointX="2.75" PointY="4.75" IsExpanded="true" />
         <AssociationConnector Association="StudentManagementSystemModel.FK__StudentAt__Stude__45F365D3" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>

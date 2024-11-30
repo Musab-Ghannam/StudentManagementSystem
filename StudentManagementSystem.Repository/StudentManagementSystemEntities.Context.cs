@@ -25,8 +25,8 @@ namespace StudentManagementSystem.Repository
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<StudentAttachment> StudentAttachments { get; set; }
-        public virtual DbSet<Student> Students { get; set; }
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<StudentAttachments> StudentAttachments { get; set; }
+        public virtual DbSet<Students> Students { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
     }
 }

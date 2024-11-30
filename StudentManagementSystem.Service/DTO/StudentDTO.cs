@@ -11,7 +11,7 @@ namespace StudentManagementSystem.Service.DTO
         public decimal TawjehiAverage;
         public string SchoolName;
 
-        public static StudentDTO ToDTO(Student student)
+        public static StudentDTO ToDTO(Students student)
         {
             return new StudentDTO
             {

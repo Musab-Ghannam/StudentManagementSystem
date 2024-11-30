@@ -10,9 +10,9 @@ namespace StudentManagementSystem.Service.DTO
         public string Password { get; set; }
         public string FullName { get; set; }
 
-        public static User ToEntity(UserDTO userDTO)
+        public static Users ToEntity(UserDTO userDTO)
         {
-            return new User
+            return new Users
             {
                 FullName = userDTO.FullName,
                 Email = userDTO.Email,

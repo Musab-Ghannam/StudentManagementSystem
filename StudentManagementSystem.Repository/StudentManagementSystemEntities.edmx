@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="StudentManagementSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="StudentAttachments">
+          <Key>
+            <PropertyRef Name="AttachmentID" />
+          </Key>
+          <Property Name="AttachmentID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StudentNumber" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="FileData" Type="varbinary(max)" />
+          <Property Name="UploadedAt" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Students">
+          <Key>
+            <PropertyRef Name="StudentNumber" />
+          </Key>
+          <Property Name="StudentNumber" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StudentNameArabic" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="StudentNameEnglish" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="StudentPicture" Type="varbinary(max)" />
+          <Property Name="DateOfBirth" Type="date" Nullable="false" />
+          <Property Name="TawjehiAverage" Type="decimal" Precision="5" Scale="2" Nullable="false" />
+          <Property Name="SchoolName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="NationalNumber" Type="char" MaxLength="10" Nullable="false" />
+          <Property Name="PhysicsGrade" Type="int" Nullable="false" />
+          <Property Name="MathGrade" Type="int" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="UpdatedAt" Type="datetime" />
+          <Property Name="IsDeleted" Type="bit" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FullName" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="LastLoginAt" Type="datetime" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
+        <Association Name="FK__StudentAt__Stude__45F365D3">
+          <End Role="Students" Type="Self.Students" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StudentAttachments" Type="Self.StudentAttachments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Students">
+              <PropertyRef Name="StudentNumber" />
+            </Principal>
+            <Dependent Role="StudentAttachments">
+              <PropertyRef Name="StudentNumber" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="StudentManagementSystemModelStoreContainer">
+          <EntitySet Name="StudentAttachments" EntityType="Self.StudentAttachments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Students" EntityType="Self.Students" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__StudentAt__Stude__45F365D3" Association="Self.FK__StudentAt__Stude__45F365D3">
+            <End Role="Students" EntitySet="Students" />
+            <End Role="StudentAttachments" EntitySet="StudentAttachments" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="StudentManagementSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="StudentAttachments">
+          <Key>
+            <PropertyRef Name="AttachmentID" />
+          </Key>
+          <Property Name="AttachmentID" Type="Guid" Nullable="false" />
+          <Property Name="FileName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileData" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="UploadedAt" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Students" Relationship="Self.FK__StudentAt__Stude__45F365D3" FromRole="StudentAttachments" ToRole="Students" />
+        </EntityType>
+        <EntityType Name="Students">
+          <Key>
+            <PropertyRef Name="StudentNumber" />
+          </Key>
+          <Property Name="StudentNumber" Type="Guid" Nullable="false" />
+          <Property Name="StudentNameArabic" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="StudentNameEnglish" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="StudentPicture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="DateOfBirth" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="TawjehiAverage" Type="Decimal" Precision="5" Scale="2" Nullable="false" />
+          <Property Name="SchoolName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="NationalNumber" Type="String" MaxLength="10" FixedLength="true" Unicode="false" Nullable="false" />
+          <Property Name="PhysicsGrade" Type="Int32" Nullable="false" />
+          <Property Name="MathGrade" Type="Int32" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+          <Property Name="IsDeleted" Type="Boolean" />
+          <NavigationProperty Name="StudentAttachments" Relationship="Self.FK__StudentAt__Stude__45F365D3" FromRole="Students" ToRole="StudentAttachments" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Guid" Nullable="false" />
+          <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FullName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="LastLoginAt" Type="DateTime" Precision="3" />
+          <Property Name="IsActive" Type="Boolean" />
+        </EntityType>
+        <Association Name="FK__StudentAt__Stude__45F365D3">
+          <End Role="Students" Type="Self.Students" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="StudentAttachments" Type="Self.StudentAttachments" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="StudentManagementSystemEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="StudentAttachments" EntityType="Self.StudentAttachments" />
+          <EntitySet Name="Students" EntityType="Self.Students" />
+          <EntitySet Name="Users" EntityType="Self.Users" />
+          <AssociationSet Name="FK__StudentAt__Stude__45F365D3" Association="Self.FK__StudentAt__Stude__45F365D3">
+            <End Role="Students" EntitySet="Students" />
+            <End Role="StudentAttachments" EntitySet="StudentAttachments" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="StudentManagementSystemModelStoreContainer" CdmEntityContainer="StudentManagementSystemEntities">
+          <EntitySetMapping Name="StudentAttachments">
+            <EntityTypeMapping TypeName="StudentManagementSystemModel.StudentAttachments">
+              <MappingFragment StoreEntitySet="StudentAttachments">
+                <ScalarProperty Name="AttachmentID" ColumnName="AttachmentID" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="FileData" ColumnName="FileData" />
+                <ScalarProperty Name="UploadedAt" ColumnName="UploadedAt" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Students">
+            <EntityTypeMapping TypeName="StudentManagementSystemModel.Students">
+              <MappingFragment StoreEntitySet="Students">
+                <ScalarProperty Name="StudentNumber" ColumnName="StudentNumber" />
+                <ScalarProperty Name="StudentNameArabic" ColumnName="StudentNameArabic" />
+                <ScalarProperty Name="StudentNameEnglish" ColumnName="StudentNameEnglish" />
+                <ScalarProperty Name="StudentPicture" ColumnName="StudentPicture" />
+                <ScalarProperty Name="DateOfBirth" ColumnName="DateOfBirth" />
+                <ScalarProperty Name="TawjehiAverage" ColumnName="TawjehiAverage" />
+                <ScalarProperty Name="SchoolName" ColumnName="SchoolName" />
+                <ScalarProperty Name="NationalNumber" ColumnName="NationalNumber" />
+                <ScalarProperty Name="PhysicsGrade" ColumnName="PhysicsGrade" />
+                <ScalarProperty Name="MathGrade" ColumnName="MathGrade" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="UpdatedAt" ColumnName="UpdatedAt" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="StudentManagementSystemModel.Users">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="LastLoginAt" ColumnName="LastLoginAt" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK__StudentAt__Stude__45F365D3" TypeName="StudentManagementSystemModel.FK__StudentAt__Stude__45F365D3" StoreEntitySet="StudentAttachments">
+            <EndProperty Name="Students">
+              <ScalarProperty Name="StudentNumber" ColumnName="StudentNumber" />
+            </EndProperty>
+            <EndProperty Name="StudentAttachments">
+              <ScalarProperty Name="AttachmentID" ColumnName="AttachmentID" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="false" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

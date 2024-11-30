@@ -5,6 +5,6 @@ namespace StudentManagementSystem.Repository.Interface
 {
     public interface IHomeRepository
     {
-        IEnumerable<Student> GetListOfStudents();
+        IEnumerable<Students> GetListOfStudents();
     }
 }

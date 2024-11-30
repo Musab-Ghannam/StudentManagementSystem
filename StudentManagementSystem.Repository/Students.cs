@@ -12,12 +12,12 @@ namespace StudentManagementSystem.Repository
     using System;
     using System.Collections.Generic;
     
-    public partial class Student
+    public partial class Students
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Student()
+        public Students()
         {
-            this.StudentAttachments = new HashSet<StudentAttachment>();
+            this.StudentAttachments = new HashSet<StudentAttachments>();
         }
     
         public System.Guid StudentNumber { get; set; }
@@ -35,6 +35,6 @@ namespace StudentManagementSystem.Repository
         public Nullable<bool> IsDeleted { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<StudentAttachment> StudentAttachments { get; set; }
+        public virtual ICollection<StudentAttachments> StudentAttachments { get; set; }
     }
 }

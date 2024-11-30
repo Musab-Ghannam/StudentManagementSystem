@@ -12,7 +12,7 @@ namespace StudentManagementSystem.Repository.Repo
             _context = new StudentManagementSystemEntities();
         }
 
-        public IEnumerable<Student> GetListOfStudents()
+        public IEnumerable<Students> GetListOfStudents()
         {
             var student = _context.Students;
             return student;
