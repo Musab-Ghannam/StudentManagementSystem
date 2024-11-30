@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html ng-app="registrationApp">
+<head>
+    <title>User Registration</title>
+
+    <style>
+        .registration-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+
+        .form-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #198754;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1rem;
+        }
+
+        .loading-spinner {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body ng-controller="RegistrationController">
+    <div class="container">
+        <div class="registration-container">
+            <h2 class="form-title">Create Account</h2>
+
+            <form name="registrationForm" ng-submit="register()" novalidate>
+          
+                <div class="form-floating">
+                    <label for="username">Username</label>
+                    <input type="text"
+                           class="form-control"
+                           id="username"
+                           name="username"
+                           ng-model="user.UserName"
+                           required
+                           ng-minlength="3"
+                           placeholder="Username">
+
+                    <div class="error-message" ng-show="registrationForm.username.$dirty && registrationForm.username.$invalid">
+                        <span ng-show="registrationForm.username.$error.required">Username is required</span>
+                        <span ng-show="registrationForm.username.$error.minlength">Username must be at least 3 characters</span>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="form-floating">
+                    <label for="email">Email address</label>
+                    <input type="email"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           ng-model="user.Email"
+                           required
+                           placeholder="Email">
+
+                    <div class="error-message" ng-show="registrationForm.email.$dirty && registrationForm.email.$invalid">
+                        <span ng-show="registrationForm.email.$error.required">Email is required</span>
+                        <span ng-show="registrationForm.email.$error.email">Please enter a valid email</span>
+                    </div>
+                </div>
+
+                <!-- Full Name -->
+                <div class="form-floating">
+                    <label for="fullname">Full Name</label>
+                    <input type="text"
+                           class="form-control"
+                           id="fullname"
+                           name="fullname"
+                           ng-model="user.FullName"
+                           required
+                           placeholder="Full Name">
+
+                    <div class="error-message" ng-show="registrationForm.fullname.$dirty && registrationForm.fullname.$invalid">
+                        <span ng-show="registrationForm.fullname.$error.required">Full name is required</span>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-floating">
+                    <label for="password">Password</label>
+                    <input type="password"
+                           class="form-control"
+                           id="password"
+                           name="password"
+                           ng-model="user.Password"
+                           required
+                           ng-minlength="6"
+                           placeholder="Password">
+
+                    <div class="error-message" ng-show="registrationForm.password.$dirty && registrationForm.password.$invalid">
+                        <span ng-show="registrationForm.password.$error.required">Password is required</span>
+                        <span ng-show="registrationForm.password.$error.minlength">Password must be at least 6 characters</span>
+                    </div>
+                </div>
+
+
+                <button type="submit"
+                        class="btn btn-primary btn-register"
+                        ng-disabled="registrationForm.$invalid || isLoading">
+                    <span class="spinner-border spinner-border-sm loading-spinner"
+                          ng-show="isLoading"></span>
+                    {{isLoading ? 'Registering...' : 'Register'}}
+                </button>
+            </form>
+
+            <!-- Success Message -->
+            <div class="success-message" ng-show="successMessage">
+                {{successMessage}}
+            </div>
+
+            <!-- Error Message -->
+            <div class="alert alert-danger mt-3" ng-show="errorMessage">
+                {{errorMessage}}
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var app = angular.module('registrationApp', []);
+
+        app.controller('RegistrationController', function ($scope, $http) {
+            $scope.user = {};
+            $scope.isLoading = false;
+            $scope.successMessage = '';
+            $scope.errorMessage = '';
+
+            $scope.register = function () {
+                if ($scope.registrationForm.$valid) {
+                    $scope.isLoading = true;
+                    $scope.successMessage = '';
+                    $scope.errorMessage = '';
+
+                    $http.post('/Account/Register', $scope.user)
+                        .then(function (response) {
+                            $scope.isLoading = false;
+                            $scope.successMessage = 'Registration successful! Redirecting...';
+                     
+                            setTimeout(function () {
+                                window.location.href = '/User/Login';
+                            }, 2000);
+                        })
+                        .catch(function (error) {
+                            $scope.isLoading = false;
+                            $scope.errorMessage = error.data.message || 'Registration failed. Please try again.';
+                            console.error('Registration failed:', error);
+                        });
+                }
+            };
+        });
+    </script>
+</body>
+</html>
