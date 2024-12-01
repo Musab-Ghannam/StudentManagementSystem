@@ -66,10 +66,10 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="student in students | filter:searchText | orderBy:sortColumn:reverseOrder">
+            <tr ng-repeat="student in paginatedStudents() | filter:searchText | orderBy:sortColumn:reverseOrder">
                 <td>{{student.StudentNumber}}</td>
                 <td>{{student.StudentName}}</td>
-                <td>{{student.DateofBirth}}</td>
+                <td>{{student.DateofBirth | date:'yyyy-MM-dd'}}</td>
                 <td>{{student.TawjehiAverage}}</td>
                 <td>{{student.SchoolName}}</td>
             </tr>
@@ -78,7 +78,6 @@
             </tr>
         </tbody>
     </table>
-    <!-- Custom Pagination Controls -->
     <cust-pagination p-items="students"
                      p-size="p_Size"
                      p-step="p_Step"
@@ -92,9 +91,8 @@
 
 angular.module('angularUtils.directives.dirPagination', []);
 
-var app = angular.module('studentApp', ['angularUtils.directives.dirPagination']);
-
-app.controller('HomeController', ['$scope', '$http', function ($scope, $http) {
+angular.module('studentApp', [])
+.controller('HomeController', ['$scope', '$http', function ($scope, $http) {
     // Verify module is correctly loaded
     console.log('Initializing HomeController');
 
@@ -115,9 +113,8 @@ app.controller('HomeController', ['$scope', '$http', function ($scope, $http) {
             $scope.error = 'Failed to parse student data';
         }
 
-        // Default values for pagination and sorting
-        $scope.p_Size = 5;
         $scope.p_Step = 1;
+        $scope.p_Size = 5;
         $scope.searchText = '';
         $scope.sortColumn = 'StudentName';
         $scope.reverseOrder = false;
@@ -138,18 +135,55 @@ app.controller('HomeController', ['$scope', '$http', function ($scope, $http) {
 
         // Pagination Logic
         $scope.paginatedStudents = function () {
-            var start = ($scope.p_Step      - 1) * $scope.p_Size;
+            var start = ($scope.p_Step - 1) * $scope.p_Size;
             var end = start + $scope.p_Size;
             return $scope.students.slice(start, end);
         };
-
     } catch (error) {
         console.error('Controller Initialization Error:', error);
         $scope.students = [];
         $scope.error = 'Failed to load student data';
     }
-}]);
-// Optional: Add error handling for module loading
+}])
+.directive('custPagination', function () {
+    return {
+        restrict: 'E',
+        scope: {
+            pItems: '=',
+            pSize: '=',
+            pStep: '=',
+            pBoundarylinks: '='
+        },
+        template: `
+            <div class="pagination-container">
+                <button ng-click="prevPage()" ng-disabled="pStep == 1">Previous</button>
+                <span>Page {{pStep}} of {{totalPages}}</span>
+                <button ng-click="nextPage()" ng-disabled="pStep == totalPages">Next</button>
+            </div>
+        `,
+        link: function (scope) {
+            scope.totalPages = Math.ceil(scope.pItems.length / scope.pSize);
+
+            scope.prevPage = function () {
+                if (scope.pStep > 1) {
+                    scope.pStep--;
+                }
+            };
+
+            scope.nextPage = function () {
+                if (scope.pStep < scope.totalPages) {
+                    scope.pStep++;
+                }
+            };
+
+            // Watch for changes in pItems or pSize to update totalPages
+            scope.$watchGroup(['pItems', 'pSize'], function () {
+                scope.totalPages = Math.ceil(scope.pItems.length / scope.pSize);
+            });
+        }
+    };
+});
+
 angular.module('studentApp').config(['$provide', function($provide) {
     $provide.decorator('$exceptionHandler', ['$delegate', function($delegate) {
         return function(exception, cause) {
@@ -159,44 +193,6 @@ angular.module('studentApp').config(['$provide', function($provide) {
     }]);
 }]);
 
-    angular.module('studentApp')
-        .directive('custPagination', function () {
-            return {
-                restrict: 'E',
-                scope: {
-                    pItems: '=',
-                    pSize: '=',
-                    pStep: '=',
-                    pBoundarylinks: '='
-                },
-                template: `
-                <div class="pagination-container">
-                    <button ng-click="prevPage()" ng-disabled="pStep == 1">Previous</button>
-                    <span>Page {{pStep}} of {{totalPages}}</span>
-                    <button ng-click="nextPage()" ng-disabled="pStep == totalPages">Next</button>
-                </div>
-            `,
-                link: function (scope) {
-                    scope.totalPages = Math.ceil(scope.pItems.length / scope.pSize);
 
-                    scope.prevPage = function () {
-                        if (scope.pStep > 1) {
-                            scope.pStep--;
-                        }
-                    };
-
-                    scope.nextPage = function () {
-                        if (scope.pStep < scope.totalPages) {
-                            scope.pStep++;
-                        }
-                    };
-
-                    // Watch for changes in pItems or pSize to update totalPages
-                    scope.$watchGroup(['pItems', 'pSize'], function () {
-                        scope.totalPages = Math.ceil(scope.pItems.length / scope.pSize);
-                    });
-                }
-            };
-        });
 
 </script>

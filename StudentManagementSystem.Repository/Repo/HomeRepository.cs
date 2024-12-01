@@ -17,9 +17,9 @@ namespace StudentManagementSystem.Repository.Repo
         public IEnumerable<Students> GetListOfStudents(int page = 1, int pageSize = 5)
         {
             var students = _context.Students
-                .OrderBy(c => c.StudentNumber)
-                           .Skip((page - 1) * pageSize)  // Skips the records based on the page number
-                           .Take(pageSize)               // Takes the number of records defined by the page size
+                           .OrderBy(c => c.StudentNumber)
+                           .Skip((page - 1) * pageSize)  
+                           .Take(pageSize)               
                            .ToList();
             return students;
         }

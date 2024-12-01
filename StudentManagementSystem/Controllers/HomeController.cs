@@ -13,7 +13,7 @@ namespace StudentManagementSystem.Controllers
         {
             _homeService = unitOfWorkServices.HomeService;
         }
-        public ActionResult Index(int page = 1, int pageSize = 5)
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
             var studentsDto = _homeService.GetStudents(page, pageSize);
             var studentModel = studentsDto.Select(StudentModel.ToModel).ToList();
