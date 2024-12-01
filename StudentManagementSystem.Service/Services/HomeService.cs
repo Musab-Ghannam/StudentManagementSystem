@@ -15,9 +15,9 @@ namespace StudentManagementSystem.Service.Services
             _homeRepository = homeRepository ?? throw new ArgumentNullException(nameof(homeRepository));
         }
 
-        public IEnumerable<StudentDTO> GetStudents()
+        public IEnumerable<StudentDTO> GetStudents(int page, int pageSize)
         {
-            var studentList = _homeRepository.GetListOfStudents();
+            var studentList = _homeRepository.GetListOfStudents(page, pageSize);
             var studentDtoList = studentList.Select(StudentDTO.ToDTO).ToList();
             return studentDtoList;
         }

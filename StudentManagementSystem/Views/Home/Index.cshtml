@@ -1,31 +1,202 @@
-﻿@model IEnumerable<StudentManagementSystem.Models.StudentModel>
-
+﻿@using Newtonsoft.Json
+@model IEnumerable<StudentManagementSystem.Models.StudentModel>
 @{
     ViewBag.Title = "Student List";
 }
+<style>
+    .table th {
+        cursor: pointer;
+    }
 
-<h2>Student List</h2>
+    .dir-pagination-controls {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Student Number</th>
-            <th>Student Name</th>
-            <th>Date of Birth</th>
-            <th>Tawjehi Average</th>
-            <th>School Name</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var student in Model)
-        {
+    .arrow-up::after {
+        content: " ▲";
+    }
+
+    .arrow-down::after {
+        content: " ▼";
+    }
+
+    .search-box {
+        margin-bottom: 20px;
+    }
+</style>
+<div ng-app="studentApp" ng-controller="HomeController">
+    <h2>Student List</h2>
+    <div class="row search-box">
+        <div class="col-md-6">
+            <input type="text" ng-model="searchText" placeholder="Search..." class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <select ng-model="itemsPerPage" class="form-control">
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+            </select>
+        </div>
+    </div>
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@student.StudentNumber</td>
-                <td>@student.StudentName</td>
-                <td>@student.DateofBirth.ToShortDateString()</td>
-                <td>@student.TawjehiAverage</td>
-                <td>@student.SchoolName</td>
+                <th ng-click="sort('StudentNumber')">
+                    Student Number
+                    <span ng-class="getSortClass('StudentNumber')"></span>
+                </th>
+                <th ng-click="sort('StudentName')">
+                    Student Name
+                    <span ng-class="getSortClass('StudentName')"></span>
+                </th>
+                <th ng-click="sort('DateofBirth')">
+                    Date of Birth
+                    <span ng-class="getSortClass('DateofBirth')"></span>
+                </th>
+                <th ng-click="sort('TawjehiAverage')">
+                    Tawjehi Average
+                    <span ng-class="getSortClass('TawjehiAverage')"></span>
+                </th>
+                <th ng-click="sort('SchoolName')">
+                    School Name
+                    <span ng-class="getSortClass('SchoolName')"></span>
+                </th>
             </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="student in students | filter:searchText | orderBy:sortColumn:reverseOrder">
+                <td>{{student.StudentNumber}}</td>
+                <td>{{student.StudentName}}</td>
+                <td>{{student.DateofBirth}}</td>
+                <td>{{student.TawjehiAverage}}</td>
+                <td>{{student.SchoolName}}</td>
+            </tr>
+            <tr ng-if="students.length === 0">
+                <td colspan="5">No students found.</td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Custom Pagination Controls -->
+    <cust-pagination p-items="students"
+                     p-size="p_Size"
+                     p-step="p_Step"
+                     p-boundarylinks="true">
+    </cust-pagination>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-utils-pagination/0.11.1/dirPagination.min.js"></script>
+<script>
+
+angular.module('angularUtils.directives.dirPagination', []);
+
+var app = angular.module('studentApp', ['angularUtils.directives.dirPagination']);
+
+app.controller('HomeController', ['$scope', '$http', function ($scope, $http) {
+    // Verify module is correctly loaded
+    console.log('Initializing HomeController');
+
+    // Defensive parsing of model data
+    try {
+        var studentsData = '@Html.Raw(Json.Encode(Model))';
+
+        try {
+            $scope.students = JSON.parse(studentsData);
+
+            // Convert the date format
+            $scope.students.forEach(student => {
+                student.DateofBirth = new Date(parseInt(student.DateofBirth.replace('/Date(', '').replace(')/', ''))).toISOString().slice(0, 10);
+            });
+        } catch (parseError) {
+            console.error('JSON Parsing Error:', parseError);
+            $scope.students = [];
+            $scope.error = 'Failed to parse student data';
         }
-    </tbody>
-</table>
+
+        // Default values for pagination and sorting
+        $scope.p_Size = 5;
+        $scope.p_Step = 1;
+        $scope.searchText = '';
+        $scope.sortColumn = 'StudentName';
+        $scope.reverseOrder = false;
+
+        // Sort function for table
+        $scope.sort = function (column) {
+            if ($scope.sortColumn === column) {
+                $scope.reverseOrder = !$scope.reverseOrder;
+            } else {
+                $scope.sortColumn = column;
+                $scope.reverseOrder = false;
+            }
+        };
+
+        $scope.getSortClass = function (column) {
+            return $scope.sortColumn === column ? ($scope.reverseOrder ? 'arrow-down' : 'arrow-up') : '';
+        };
+
+        // Pagination Logic
+        $scope.paginatedStudents = function () {
+            var start = ($scope.p_Step      - 1) * $scope.p_Size;
+            var end = start + $scope.p_Size;
+            return $scope.students.slice(start, end);
+        };
+
+    } catch (error) {
+        console.error('Controller Initialization Error:', error);
+        $scope.students = [];
+        $scope.error = 'Failed to load student data';
+    }
+}]);
+// Optional: Add error handling for module loading
+angular.module('studentApp').config(['$provide', function($provide) {
+    $provide.decorator('$exceptionHandler', ['$delegate', function($delegate) {
+        return function(exception, cause) {
+            console.error('Angular Error:', exception, cause);
+            $delegate(exception, cause);
+        };
+    }]);
+}]);
+
+    angular.module('studentApp')
+        .directive('custPagination', function () {
+            return {
+                restrict: 'E',
+                scope: {
+                    pItems: '=',
+                    pSize: '=',
+                    pStep: '=',
+                    pBoundarylinks: '='
+                },
+                template: `
+                <div class="pagination-container">
+                    <button ng-click="prevPage()" ng-disabled="pStep == 1">Previous</button>
+                    <span>Page {{pStep}} of {{totalPages}}</span>
+                    <button ng-click="nextPage()" ng-disabled="pStep == totalPages">Next</button>
+                </div>
+            `,
+                link: function (scope) {
+                    scope.totalPages = Math.ceil(scope.pItems.length / scope.pSize);
+
+                    scope.prevPage = function () {
+                        if (scope.pStep > 1) {
+                            scope.pStep--;
+                        }
+                    };
+
+                    scope.nextPage = function () {
+                        if (scope.pStep < scope.totalPages) {
+                            scope.pStep++;
+                        }
+                    };
+
+                    // Watch for changes in pItems or pSize to update totalPages
+                    scope.$watchGroup(['pItems', 'pSize'], function () {
+                        scope.totalPages = Math.ceil(scope.pItems.length / scope.pSize);
+                    });
+                }
+            };
+        });
+
+</script>

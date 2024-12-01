@@ -13,11 +13,20 @@ namespace StudentManagementSystem.Controllers
         {
             _homeService = unitOfWorkServices.HomeService;
         }
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, int pageSize = 5)
         {
-            var studentDTo = _homeService.GetStudents();
-            var studentModel = studentDTo.Select(StudentModel.ToModel).ToList();
+            var studentsDto = _homeService.GetStudents(page, pageSize);
+            var studentModel = studentsDto.Select(StudentModel.ToModel).ToList();
             return View(studentModel);
+        }
+
+        [HttpGet]
+        public ActionResult GetStudents(int page = 1, int pageSize = 5)
+        {
+            var studentDTo = _homeService.GetStudents(page, pageSize);
+            var paginatedStudents = studentDTo.ToList();
+            var studentModel = paginatedStudents.Select(StudentModel.ToModel).ToList();
+            return Json(new { students = paginatedStudents, total = studentDTo.Count() }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult About()
