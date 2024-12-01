@@ -1,5 +1,6 @@
 ﻿using StudentManagementSystem.Models;
 using StudentManagementSystem.Service.Services;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -13,34 +14,105 @@ namespace StudentManagementSystem.Controllers
         {
             _homeService = unitOfWorkServices.HomeService;
         }
-        public ActionResult Index(int page = 1, int pageSize = 10)
+
+        public ActionResult Index()
         {
-            var studentsDto = _homeService.GetStudents(page, pageSize);
+            var studentsDto = _homeService.GetStudents();
             var studentModel = studentsDto.Select(StudentModel.ToModel).ToList();
             return View(studentModel);
         }
 
-        [HttpGet]
-        public ActionResult GetStudents(int page = 1, int pageSize = 5)
+        #region Update
+        public ActionResult GetStudentById(Guid? id)
         {
-            var studentDTo = _homeService.GetStudents(page, pageSize);
-            var paginatedStudents = studentDTo.ToList();
-            var studentModel = paginatedStudents.Select(StudentModel.ToModel).ToList();
-            return Json(new { students = paginatedStudents, total = studentDTo.Count() }, JsonRequestBehavior.AllowGet);
+            var studentDTO = _homeService.GetStudentById(id);
+            var studentModel = StudentModel.ToModel(studentDTO);
+            return View(studentModel);
         }
 
-        public ActionResult About()
+        [Route("Home/Update/{studentNumber}")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Update(StudentModelUpdate studentModelUpdate)
         {
-            ViewBag.Message = "Your application description page.";
+            if (ModelState.IsValid)
+            {
+                var studentExist = _homeService.GetStudentById(studentModelUpdate.StudentNumber);
+                if (studentExist is null)
+                {
+                    return View(studentModelUpdate);
+                }
+                var studentDTO = StudentModelUpdate.Updated(studentExist, studentModelUpdate);
+                bool isUpdated = _homeService.UpdateStudent(studentDTO);
+                if (isUpdated)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return View(studentDTO);
+                }
+            }
+            return View(studentModelUpdate);
+
+        }
+        #endregion
+
+
+        #region Create
+        public ActionResult Create()
+        {
 
             return View();
         }
 
-        public ActionResult Contact()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(StudentModelCreate studentModelCraete)
         {
-            ViewBag.Message = "Your contact page.";
+            if (ModelState.IsValid)
+            {
 
-            return View();
+                var studentDTO = StudentModelCreate.ToDTO(studentModelCraete);
+                bool isUpdated = _homeService.UpdateStudent(studentDTO);
+                if (isUpdated)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return View(studentDTO);
+                }
+            }
+            return View(studentModelCraete);
+
         }
+        #endregion
+
+        #region Delete
+        [Route("Home/Delete/{studentNumber}")]
+        public ActionResult Delete(Guid id)
+        {
+            if (ModelState.IsValid)
+            {
+                var studentExist = _homeService.GetStudentById(id);
+                if (studentExist is null)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                studentExist.IsDeleted = true;
+                bool isDeleted = _homeService.Delete(studentExist);
+                if (isDeleted)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
+        }
+        #endregion
     }
 }

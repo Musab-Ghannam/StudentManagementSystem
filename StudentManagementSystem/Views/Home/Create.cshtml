@@ -1,0 +1,44 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Student</title>
+
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Student</h2>
+
+        <form asp-action="Create" asp-controller="Home" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="studentName">Student Name</label>
+                    <input type="text" id="studentName" class="form-control" name="StudentName" value="@Model.StudentName" required />
+                </div>
+                <input type="hidden" name="StudentNumber" value="@Model.StudentNumber" />
+                <div class="col-md-6 form-group">
+                    <label for="dateOfBirth">Date of Birth</label>
+                    <input type="date" id="dateOfBirth" class="form-control" name="DateOfBirth" value="@Model.DateofBirth.ToString("yyyy-MM-dd")" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="tawjehiAverage">Tawjehi Average</label>
+                    <input type="number" id="tawjehiAverage" class="form-control" name="TawjehiAverage" value="@Model.TawjehiAverage" required />
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="schoolName">School Name</label>
+                    <input type="text" id="schoolName" class="form-control" name="SchoolName" value="@Model.SchoolName" required />
+                </div>
+            </div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <input type="submit" class="btn btn-success" value="Add" />
+            <a href="@Url.Action("Index")" class="btn btn-secondary">Back to List</a>
+        </form>
+    </div>
+</body>
+</html>

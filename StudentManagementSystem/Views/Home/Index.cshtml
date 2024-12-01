@@ -63,6 +63,7 @@
                     School Name
                     <span ng-class="getSortClass('SchoolName')"></span>
                 </th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -72,6 +73,12 @@
                 <td>{{student.DateofBirth | date:'yyyy-MM-dd'}}</td>
                 <td>{{student.TawjehiAverage}}</td>
                 <td>{{student.SchoolName}}</td>
+                <td>
+                    <a href="/Home/GetStudentById/{{student.StudentNumber}}" class="btn btn-primary">Edit</a>
+
+
+                    <a asp-action="DeleteItem" asp-route-id="{{student.StudentNumber}}" class="btn btn-danger delete-link">Delete</a>
+                </td>
             </tr>
             <tr ng-if="students.length === 0">
                 <td colspan="5">No students found.</td>
@@ -85,8 +92,8 @@
     </cust-pagination>
 
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-utils-pagination/0.11.1/dirPagination.min.js"></script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-utils-pagination/0.11.1/dirPagination.min.js"></script>*@
 <script>
 
 angular.module('angularUtils.directives.dirPagination', []);

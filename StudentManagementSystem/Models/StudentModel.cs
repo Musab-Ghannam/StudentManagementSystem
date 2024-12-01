@@ -7,16 +7,16 @@ namespace StudentManagementSystem.Models
     public class StudentModel
     {
         [Required]
-        public Guid StudentNumber;
+        public Guid StudentNumber { get; set; }
         [Required]
-        public string StudentName;
+        public string StudentName { get; set; }
         [Required]
-        public DateTime DateofBirth;
+        public DateTime DateofBirth { get; set; }
         [Required]
         [Range(0,100)]
-        public decimal TawjehiAverage;
+        public decimal TawjehiAverage { get; set; }
         [Required]
-        public string SchoolName;
+        public string SchoolName { get; set; }
 
         public static StudentModel ToModel(StudentDTO student)
         {

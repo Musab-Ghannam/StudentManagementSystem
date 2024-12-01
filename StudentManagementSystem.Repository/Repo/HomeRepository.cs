@@ -1,4 +1,5 @@
 ﻿using StudentManagementSystem.Repository.Interface;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -14,14 +15,37 @@ namespace StudentManagementSystem.Repository.Repo
             _context = new StudentManagementSystemEntities();
         }
 
-        public IEnumerable<Students> GetListOfStudents(int page = 1, int pageSize = 5)
+        public IEnumerable<Students> GetListOfStudents()
         {
-            var students = _context.Students
-                           .OrderBy(c => c.StudentNumber)
-                           .Skip((page - 1) * pageSize)  
-                           .Take(pageSize)               
-                           .ToList();
+            var students = _context.Students;
             return students;
+        }
+
+        public int GetTotalStudentsCount()
+        {
+            return _context.Students.Count();
+        }
+
+        public Students GetStudentById(Guid? id)
+        {
+            return _context.Students
+                .AsNoTracking()
+                           .FirstOrDefault(c => c.StudentNumber == id);
+
+        }
+
+        public bool UpdateStudent(Students students)
+        {
+            _context.Entry(students).State = EntityState.Modified;
+            _context.SaveChanges();
+            return true;
+        }
+
+        public bool CreateStudent(Students students)
+        {
+            _context.Students.Add(students);
+            _context.SaveChanges();
+            return true;
         }
     }
 }
