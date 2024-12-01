@@ -62,6 +62,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interface\IAccountRepository.cs" />
     <Compile Include="Interface\IHomeRepository.cs" />
     <Compile Include="Repo\AccountRepository.cs" />
     <Compile Include="Class1.cs" />

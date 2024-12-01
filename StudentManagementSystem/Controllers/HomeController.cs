@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace StudentManagementSystem.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly HomeService _homeService;
 
@@ -17,73 +17,123 @@ namespace StudentManagementSystem.Controllers
 
         public ActionResult Index()
         {
-            var studentsDto = _homeService.GetStudents();
-            var studentModel = studentsDto.Select(StudentModel.ToModel).ToList();
-            return View(studentModel);
+            try
+            {
+                var studentsDto = _homeService.GetStudents();
+                var studentModel = studentsDto.Select(StudentModel.ToModel).ToList();
+                return View(studentModel);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"There is an issue in {ex.Message}");
+                return RedirectToAction("Error", "Home");
+            }
+
         }
 
         #region Update
         public ActionResult GetStudentById(Guid? id)
         {
-            var studentDTO = _homeService.GetStudentById(id);
-            var studentModel = StudentModel.ToModel(studentDTO);
-            return View(studentModel);
+            try
+            {
+                var studentDTO = _homeService.GetStudentById(id);
+                var studentModel = StudentModel.ToModel(studentDTO);
+                return View(studentModel);
+
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"There is an issue in {ex.Message}");
+                return RedirectToAction("Error", "Home");
+            }
+
         }
 
         [Route("Home/Update/{studentNumber}")]
         [ValidateAntiForgeryToken]
         public ActionResult Update(StudentModelUpdate studentModelUpdate)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var studentExist = _homeService.GetStudentById(studentModelUpdate.StudentNumber);
-                if (studentExist is null)
+                if (ModelState.IsValid)
                 {
-                    return View(studentModelUpdate);
+                    var studentExist = _homeService.GetStudentById(studentModelUpdate.StudentNumber);
+                    if (studentExist is null)
+                    {
+                        return View(studentModelUpdate);
+                    }
+                    var studentDTO = StudentModelUpdate.Updated(studentExist, studentModelUpdate);
+                    bool isUpdated = _homeService.UpdateStudent(studentDTO);
+                    if (isUpdated)
+                    {
+                        ShowSuccessMessage("Student Data Updated Successfully");
+                        return RedirectToAction(nameof(GetStudentById), new { id = studentModelUpdate.StudentNumber });
+                    }
+                    else
+                    {
+                        ShowErrorMessage("There is an issue");
+                        return View(studentModelUpdate);
+                    }
                 }
-                var studentDTO = StudentModelUpdate.Updated(studentExist, studentModelUpdate);
-                bool isUpdated = _homeService.UpdateStudent(studentDTO);
-                if (isUpdated)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    return View(studentDTO);
-                }
+                return RedirectToAction(nameof(GetStudentById), new { id = studentModelUpdate.StudentNumber });
+
             }
-            return View(studentModelUpdate);
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"There is an issue in {ex.Message}");
+                return RedirectToAction("Error", "Home");
+            }
+
 
         }
         #endregion
 
-
         #region Create
         public ActionResult Create()
         {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"There is an issue in {ex.Message}");
+                return RedirectToAction("Error", "Home");
+            }
 
-            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(StudentModelCreate studentModelCraete)
         {
-            if (ModelState.IsValid)
+            try
             {
+                if (ModelState.IsValid)
+                {
 
-                var studentDTO = StudentModelCreate.ToDTO(studentModelCraete);
-                bool isUpdated = _homeService.CraeteStudent(studentDTO);
-                if (isUpdated)
-                {
-                    return RedirectToAction(nameof(Index));
+                    var studentDTO = StudentModelCreate.ToDTO(studentModelCraete);
+                    bool isCreated = _homeService.CraeteStudent(studentDTO);
+                    if (isCreated)
+                    {
+                        ShowSuccessMessage("Student Data Created Successfully");
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ShowErrorMessage("There is an issue");
+                        return View(studentDTO);
+                    }
                 }
-                else
-                {
-                    return View(studentDTO);
-                }
+                return View(studentModelCraete);
+
             }
-            return View(studentModelCraete);
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"There is an issue in {ex.Message}");
+                return RedirectToAction("Error", "Home");
+            }
+
 
         }
         #endregion
@@ -92,26 +142,47 @@ namespace StudentManagementSystem.Controllers
         [Route("Home/Delete/{studentNumber}")]
         public ActionResult Delete(Guid id)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var studentExist = _homeService.GetStudentById(id);
-                if (studentExist is null)
+                if (ModelState.IsValid)
                 {
-                    return RedirectToAction(nameof(Index));
-                }
-                studentExist.IsDeleted = true;
-                bool isDeleted = _homeService.Delete(studentExist);
-                if (isDeleted)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            return RedirectToAction(nameof(Index));
+                    var studentExist = _homeService.GetStudentById(id);
+                    if (studentExist is null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    studentExist.IsDeleted = true;
+                    bool isDeleted = _homeService.Delete(studentExist);
+                    if (isDeleted)
+                    {
+                        ShowSuccessMessage("Student is Deleted");
+                        return RedirectToAction(nameof(Index));
 
+                    }
+                    else
+                    {
+                        ShowErrorMessage("There is an issue");
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"There is an issue in {ex.Message}");
+                return RedirectToAction("Error", "Home");
+
+            }
+
+
+        }
+        #endregion
+
+        #region Error
+        public ActionResult Error()
+        {
+            return View();
         }
         #endregion
     }

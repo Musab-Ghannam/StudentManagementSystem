@@ -179,6 +179,7 @@
     <Compile Include="Models\StudentModel.cs" />
     <Compile Include="Models\StudentModel.Delete.cs" />
     <Compile Include="Models\StudentModel.Update.cs" />
+    <Compile Include="Models\UserLogIn.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -18,19 +18,22 @@ namespace StudentManagementSystem.Repository.Repo
         public IEnumerable<Students> GetListOfStudents()
         {
             var students = _context.Students
-                                  .OrderByDescending(c=>c.CreatedAt);
+                                   .Where(c=>c.IsDeleted == false)
+                                   .OrderByDescending(c=>c.CreatedAt);
             return students;
         }
 
         public int GetTotalStudentsCount()
         {
-            return _context.Students.Count();
+            return _context.Students
+                           .Where(c=>c.IsDeleted == false)
+                           .Count();
         }
 
         public Students GetStudentById(Guid? id)
         {
             return _context.Students
-                .AsNoTracking()
+                           .AsNoTracking()
                            .FirstOrDefault(c => c.StudentNumber == id);
 
         }

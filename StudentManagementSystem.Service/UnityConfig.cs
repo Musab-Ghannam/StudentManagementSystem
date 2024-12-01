@@ -1,4 +1,5 @@
-﻿using StudentManagementSystem.Repository.Interface;
+﻿using StudentManagementSystem.Repository;
+using StudentManagementSystem.Repository.Interface;
 using StudentManagementSystem.Repository.Repo;
 using StudentManagementSystem.Service.Services;
 using Unity;
@@ -11,6 +12,8 @@ namespace StudentManagementSystem.Service
         {
             container.RegisterType<IHomeRepository, HomeRepository>();
             container.RegisterType<HomeService>();
+            container.RegisterType<IAccountRepository, AccountRepository>();
+            container.RegisterType<AccountService>();
 
         }
     }

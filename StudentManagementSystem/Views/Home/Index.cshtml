@@ -79,7 +79,7 @@
                         <a href="/Home/GetStudentById/{{student.StudentNumber}}" class="btn btn-primary">Edit</a>
 
 
-                        <a asp-action="DeleteItem" asp-route-id="{{student.StudentNumber}}" class="btn btn-danger delete-link">Delete</a>
+                        <a href="/Home/Delete/{{student.StudentNumber}}" class="btn btn-danger delete-link">Delete</a>
                     </td>
                 </tr>
                 <tr ng-if="students.length === 0">

@@ -1,5 +1,8 @@
 ﻿using StudentManagementSystem.Service.DTO;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace StudentManagementSystem.Models
 {
@@ -20,15 +23,19 @@ namespace StudentManagementSystem.Models
             {
                 FullName = userModel.FullName,
                 Email = userModel.Email,
-                Password = HashPassword(userModel.Password),
+                Password = userModel.Password,
                 UserName = userModel.UserName
             };
         }
 
-        private static string HashPassword(string password)
-        {
-
-            return password;
-        }
+        //private static string HashPassword(string password)
+        //{
+        //    using (SHA256 sha256 = SHA256.Create())
+        //    {
+        //        byte[] bytes = Encoding.UTF8.GetBytes(password);
+        //        byte[] hash = sha256.ComputeHash(bytes);
+        //        return Convert.ToBase64String(hash);
+        //    }
+        //}
     }
 }
