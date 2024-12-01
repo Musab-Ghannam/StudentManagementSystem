@@ -73,7 +73,7 @@ namespace StudentManagementSystem.Controllers
             {
 
                 var studentDTO = StudentModelCreate.ToDTO(studentModelCraete);
-                bool isUpdated = _homeService.UpdateStudent(studentDTO);
+                bool isUpdated = _homeService.CraeteStudent(studentDTO);
                 if (isUpdated)
                 {
                     return RedirectToAction(nameof(Index));

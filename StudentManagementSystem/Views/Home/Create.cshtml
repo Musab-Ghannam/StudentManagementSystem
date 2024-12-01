@@ -9,36 +9,60 @@
     <div class="container">
         <h2>Edit Student</h2>
 
-        <form asp-action="Create" asp-controller="Home" method="post">
+        @using (Html.BeginForm("Create", "Home", FormMethod.Post))
+        {
             @Html.AntiForgeryToken()
+
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label for="studentName">Student Name</label>
-                    <input type="text" id="studentName" class="form-control" name="StudentName" value="@Model.StudentName" required />
+                    <input type="text" id="studentName" class="form-control" name="StudentName" required />
                 </div>
-                <input type="hidden" name="StudentNumber" value="@Model.StudentNumber" />
+                <input type="hidden" name="StudentNumber" />
                 <div class="col-md-6 form-group">
                     <label for="dateOfBirth">Date of Birth</label>
-                    <input type="date" id="dateOfBirth" class="form-control" name="DateOfBirth" value="@Model.DateofBirth.ToString("yyyy-MM-dd")" required />
+                    <input type="date" id="dateOfBirth" class="form-control" name="DateOfBirth" required />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label for="tawjehiAverage">Tawjehi Average</label>
-                    <input type="number" id="tawjehiAverage" class="form-control" name="TawjehiAverage" value="@Model.TawjehiAverage" required />
+                    <input type="number" id="tawjehiAverage" class="form-control" name="TawjehiAverage" required />
                 </div>
 
                 <div class="col-md-6 form-group">
                     <label for="schoolName">School Name</label>
-                    <input type="text" id="schoolName" class="form-control" name="SchoolName" value="@Model.SchoolName" required />
+                    <input type="text" id="schoolName" class="form-control" name="SchoolName" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="tawjehiAverage">Physics Grade</label>
+                    <input type="number" id="PhysicsGrade" class="form-control" name="PhysicsGrade" required />
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="schoolName">Math Grade</label>
+                    <input type="number" id="MathGrade" class="form-control" name="MathGrade" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label for="tawjehiAverage">National Numumber</label>
+                    <input type="text" id="NationalNum" class="form-control" name="NationalNum" required />
+                </div>
+
+                <div class="col-md-6 form-group">
+                    <label for="schoolName">Student Name Arabic</label>
+                    <input type="text" id="StudentNameArabic" class="form-control" name="StudentNameArabic" required />
                 </div>
             </div>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <input type="submit" class="btn btn-success" value="Add" />
             <a href="@Url.Action("Index")" class="btn btn-secondary">Back to List</a>
-        </form>
+        }
     </div>
 </body>
 </html>

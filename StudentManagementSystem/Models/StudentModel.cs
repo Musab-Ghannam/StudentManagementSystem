@@ -7,7 +7,7 @@ namespace StudentManagementSystem.Models
     public class StudentModel
     {
         [Required]
-        public Guid StudentNumber { get; set; }
+        public Guid? StudentNumber { get; set; }
         [Required]
         public string StudentName { get; set; }
         [Required]

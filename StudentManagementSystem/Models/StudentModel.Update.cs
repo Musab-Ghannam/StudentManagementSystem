@@ -24,6 +24,7 @@ namespace StudentManagementSystem.Models
             studentDTO.SchoolName = student.SchoolName;
             studentDTO.StudentName = student.StudentName;
             studentDTO.TawjehiAverage = student.TawjehiAverage;
+            studentDTO.UpdatedAt = DateTime.UtcNow;
             return studentDTO; 
         }
     }

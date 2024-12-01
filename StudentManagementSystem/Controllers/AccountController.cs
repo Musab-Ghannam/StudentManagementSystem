@@ -4,7 +4,7 @@ using System.Web.Mvc;
 
 namespace StudentManagementSystem.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private AccountService _service;
 

@@ -25,72 +25,75 @@
     .search-box {
         margin-bottom: 20px;
     }
+  
 </style>
-<div ng-app="studentApp" ng-controller="HomeController">
-    <h2>Student List</h2>
-    <div class="row search-box">
-        <div class="col-md-6">
-            <input type="text" ng-model="searchText" placeholder="Search..." class="form-control" />
+<div class="container">
+
+
+    <div ng-app="studentApp" ng-controller="HomeController">
+        <h2>Student List</h2>
+        <div class="row search-box">
+            <div class="col-md-6">
+                <input type="text" ng-model="searchText" placeholder="Search..." class="form-control" />
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-3 ml-auto">
+                    <a href="/Home/Create" class="btn btn-success">Add Student</a>
+                </div>
+            </div>
         </div>
-        <div class="col-md-3">
-            <select ng-model="itemsPerPage" class="form-control">
-                <option value="5">5 per page</option>
-                <option value="10">10 per page</option>
-                <option value="20">20 per page</option>
-            </select>
-        </div>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th ng-click="sort('StudentNumber')">
+                        Student Number
+                        <span ng-class="getSortClass('StudentNumber')"></span>
+                    </th>
+                    <th ng-click="sort('StudentName')">
+                        Student Name
+                        <span ng-class="getSortClass('StudentName')"></span>
+                    </th>
+                    <th ng-click="sort('DateofBirth')">
+                        Date of Birth
+                        <span ng-class="getSortClass('DateofBirth')"></span>
+                    </th>
+                    <th ng-click="sort('TawjehiAverage')">
+                        Tawjehi Average
+                        <span ng-class="getSortClass('TawjehiAverage')"></span>
+                    </th>
+                    <th ng-click="sort('SchoolName')">
+                        School Name
+                        <span ng-class="getSortClass('SchoolName')"></span>
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="student in paginatedStudents() | filter:searchText | orderBy:sortColumn:reverseOrder">
+                    <td>{{student.StudentNumber}}</td>
+                    <td>{{student.StudentName}}</td>
+                    <td>{{student.DateofBirth | date:'yyyy-MM-dd'}}</td>
+                    <td>{{student.TawjehiAverage}}</td>
+                    <td>{{student.SchoolName}}</td>
+                    <td>
+                        <a href="/Home/GetStudentById/{{student.StudentNumber}}" class="btn btn-primary">Edit</a>
+
+
+                        <a asp-action="DeleteItem" asp-route-id="{{student.StudentNumber}}" class="btn btn-danger delete-link">Delete</a>
+                    </td>
+                </tr>
+                <tr ng-if="students.length === 0">
+                    <td colspan="5">No students found.</td>
+                </tr>
+            </tbody>
+        </table>
+        <cust-pagination p-items="students"
+                         p-size="p_Size"
+                         p-step="p_Step"
+                         p-boundarylinks="true">
+        </cust-pagination>
+
     </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th ng-click="sort('StudentNumber')">
-                    Student Number
-                    <span ng-class="getSortClass('StudentNumber')"></span>
-                </th>
-                <th ng-click="sort('StudentName')">
-                    Student Name
-                    <span ng-class="getSortClass('StudentName')"></span>
-                </th>
-                <th ng-click="sort('DateofBirth')">
-                    Date of Birth
-                    <span ng-class="getSortClass('DateofBirth')"></span>
-                </th>
-                <th ng-click="sort('TawjehiAverage')">
-                    Tawjehi Average
-                    <span ng-class="getSortClass('TawjehiAverage')"></span>
-                </th>
-                <th ng-click="sort('SchoolName')">
-                    School Name
-                    <span ng-class="getSortClass('SchoolName')"></span>
-                </th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="student in paginatedStudents() | filter:searchText | orderBy:sortColumn:reverseOrder">
-                <td>{{student.StudentNumber}}</td>
-                <td>{{student.StudentName}}</td>
-                <td>{{student.DateofBirth | date:'yyyy-MM-dd'}}</td>
-                <td>{{student.TawjehiAverage}}</td>
-                <td>{{student.SchoolName}}</td>
-                <td>
-                    <a href="/Home/GetStudentById/{{student.StudentNumber}}" class="btn btn-primary">Edit</a>
-
-
-                    <a asp-action="DeleteItem" asp-route-id="{{student.StudentNumber}}" class="btn btn-danger delete-link">Delete</a>
-                </td>
-            </tr>
-            <tr ng-if="students.length === 0">
-                <td colspan="5">No students found.</td>
-            </tr>
-        </tbody>
-    </table>
-    <cust-pagination p-items="students"
-                     p-size="p_Size"
-                     p-step="p_Step"
-                     p-boundarylinks="true">
-    </cust-pagination>
-
 </div>
 @*<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-utils-pagination/0.11.1/dirPagination.min.js"></script>*@

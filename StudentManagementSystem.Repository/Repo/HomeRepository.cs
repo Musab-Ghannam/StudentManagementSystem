@@ -17,7 +17,8 @@ namespace StudentManagementSystem.Repository.Repo
 
         public IEnumerable<Students> GetListOfStudents()
         {
-            var students = _context.Students;
+            var students = _context.Students
+                                  .OrderByDescending(c=>c.CreatedAt);
             return students;
         }
 

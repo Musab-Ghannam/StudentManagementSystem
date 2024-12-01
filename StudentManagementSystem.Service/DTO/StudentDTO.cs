@@ -5,7 +5,7 @@ namespace StudentManagementSystem.Service.DTO
 {
     public class StudentDTO
     {
-        public Guid StudentNumber { get; set; }
+        public Guid? StudentNumber { get; set; }
         public string StudentName { get; set; }
         public DateTime DateofBirth { get; set; }
         public decimal TawjehiAverage { get; set; }
@@ -46,7 +46,7 @@ namespace StudentManagementSystem.Service.DTO
                 TawjehiAverage = student.TawjehiAverage,
                 SchoolName = student.SchoolName,
                 DateOfBirth = student.DateofBirth,
-                StudentNumber = student.StudentNumber,
+                StudentNumber = student.StudentNumber ?? Guid.NewGuid(),
                 IsDeleted = student.IsDeleted,
                 UpdatedAt = student.UpdatedAt,
                 CreatedAt = student.CreatedAt,
