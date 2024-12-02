@@ -28,14 +28,15 @@ namespace StudentManagementSystem.Models
             };
         }
 
-        //private static string HashPassword(string password)
-        //{
-        //    using (SHA256 sha256 = SHA256.Create())
-        //    {
-        //        byte[] bytes = Encoding.UTF8.GetBytes(password);
-        //        byte[] hash = sha256.ComputeHash(bytes);
-        //        return Convert.ToBase64String(hash);
-        //    }
-        //}
+        public static UserLogIn ToLogIn(UserModel userModel)
+        {
+            return new UserLogIn
+            {
+                Email = userModel?.Email,
+                Password = userModel?.Password,
+            };
+
+        }
+
     }
 }

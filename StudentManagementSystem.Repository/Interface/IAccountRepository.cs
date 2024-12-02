@@ -5,6 +5,6 @@ namespace StudentManagementSystem.Repository.Interface
     {
         bool LogIn(Users users);
         bool Register(Users users);
-        bool GetUserById(Users users);
+        Users GetUserById(Users users);
     }
 }

@@ -22,20 +22,21 @@ namespace StudentManagementSystem.Service.Services
             return isRegistered;
         }
 
-        public bool LogIn(string username, string password)
+        public UserDTO LogIn(string username, string password)
         {
             var user = new Users
             {
                 PasswordHash = password,
                 Username = username,
             };
-            var isUserExist = _accountRepository.GetUserById(user);
-            if (isUserExist)
+            var userExist = _accountRepository.GetUserById(user);
+
+            if (userExist != null)
             {
-                return true;
+                return UserDTO.ToDTO(userExist);
             }
 
-            return false;
+            return null;
         }
 
 

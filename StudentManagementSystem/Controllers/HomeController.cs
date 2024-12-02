@@ -1,4 +1,5 @@
-﻿using StudentManagementSystem.Models;
+﻿using StudentManagementSystem.Autharization;
+using StudentManagementSystem.Models;
 using StudentManagementSystem.Service.Services;
 using System;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Web.Mvc;
 
 namespace StudentManagementSystem.Controllers
 {
+    [CustomAuthorize]
     public class HomeController : BaseController
     {
         private readonly HomeService _homeService;

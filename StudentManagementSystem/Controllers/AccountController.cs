@@ -19,6 +19,7 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
 
+        #region register
         public ActionResult Register()
         {
             return View();
@@ -32,9 +33,18 @@ namespace StudentManagementSystem.Controllers
                 if (ModelState.IsValid)
                 {
                     var userDTO = UserModel.ToDTO(userModel);
+                    var userLog = UserModel.ToLogIn(userModel);
                     var isRegistered = _service.Register(userDTO);
-                    ShowSuccessMessage($"Register is Done Successfully, Welcom {userModel.UserName}");
-                    return Json(new { success = true });
+                    if (isRegistered)
+                    {
+                        LogIn(userLog);
+                        ShowSuccessMessage($"Register is Done Successfully, Welcom {userModel.UserName}");
+                        return Json(new { success = true });
+                    }
+                    else
+                    {
+                        ShowErrorMessage("the user is already Registered");
+                    }
                 }
                 return Json(new { success = false, message = "Failed to create user." });
             }
@@ -46,8 +56,10 @@ namespace StudentManagementSystem.Controllers
 
         }
 
+        #endregion
+
         [HttpPost]
-        public ActionResult LogIn(UserModel userModel)
+        public ActionResult LogIn(UserLogIn userModel)
         {
             if (!ModelState.IsValid)
             {
@@ -57,11 +69,13 @@ namespace StudentManagementSystem.Controllers
 
             try
             {
-                var isAuthenticated = _service.LogIn(userModel.UserName, userModel.Password);
+                var authenticated = _service.LogIn(userModel.Email, userModel.Password);
 
-                if (isAuthenticated)
+                if (authenticated != null)
                 {
-                    ShowSuccessMessage($"Login is successful, Welcome {userModel.UserName.Split('@')[0]}");
+                    Session["UserName"] = userModel.Email;
+                    Session["UserId"] = authenticated.Id;
+                    ShowSuccessMessage($"Login is successful, Welcome {userModel.Email.Split('@')[0]}");
                     return RedirectToAction("Index", "Home");
                 }
                 else
@@ -74,6 +88,24 @@ namespace StudentManagementSystem.Controllers
             {
                 ShowErrorMessage($"There was an issue: {ex.Message}");
                 return RedirectToAction("Error", "Home");
+            }
+        }
+
+        public ActionResult Logout()
+        {
+            try
+            {
+
+                Session.Remove("UserName");
+                Session.Remove("UserId");
+
+                return RedirectToAction("LogIn", "Account");
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors that may occur during logout
+                ShowErrorMessage($"An error occurred while logging out: {ex.Message}");
+                return RedirectToAction("Error", "Home");  // Optionally redirect to an error page
             }
         }
 
