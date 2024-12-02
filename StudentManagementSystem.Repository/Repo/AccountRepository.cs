@@ -8,11 +8,11 @@ namespace StudentManagementSystem.Repository
 {
     public class AccountRepository : IAccountRepository
     {
-        private StudentManagementSystemEntities _context;
+        private StudentManagementSystemEntities1 _context;
 
         public AccountRepository()
         {
-            _context = new StudentManagementSystemEntities();
+            _context = new StudentManagementSystemEntities1();
         }
 
         public Users GetUserById(Users users)
@@ -22,7 +22,6 @@ namespace StudentManagementSystem.Repository
                 return null;
             }
             string hashedPassword = HashPassword(users.PasswordHash);
-            //var userExist = _context.Users.FirstOrDefault(c => c.Email == users.Username && c.PasswordHash == hashedPassword);
             var usernameParam = new SqlParameter("@Username", users.Username ?? (object)DBNull.Value);
             var passwordParam = new SqlParameter("@PasswordHash", hashedPassword ?? (object)DBNull.Value);
 

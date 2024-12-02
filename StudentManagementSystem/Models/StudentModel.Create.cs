@@ -1,8 +1,11 @@
 ﻿
 
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Converters;
 using StudentManagementSystem.Service.DTO;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 
 namespace StudentManagementSystem.Models
 {
@@ -29,7 +32,9 @@ namespace StudentManagementSystem.Models
         public string NationalNum { get; set; }
         [Required]
         public string StudentNameArabic { get; set; }
-        public byte[] pic { get; set; }
+        public HttpPostedFileBase Pic { get; set; }
+        public string StudentPic { get; set; }
+
 
         public static StudentDTO ToDTO(StudentModelCreate student)
         {
@@ -47,6 +52,7 @@ namespace StudentManagementSystem.Models
                 PhysicsGrade = student.PhysicsGrade,
                 MathGrade = student.MathGrade,
                 StudentNameArabic = student.StudentNameArabic,
+                pic = student.StudentPic,
             };
 
         }

@@ -8,11 +8,11 @@ namespace StudentManagementSystem.Repository.Repo
 {
     public class HomeRepository : IHomeRepository
     {
-        private StudentManagementSystemEntities _context;
+        private StudentManagementSystemEntities1 _context;
 
         public HomeRepository()
         {
-            _context = new StudentManagementSystemEntities();
+            _context = new StudentManagementSystemEntities1();
         }
 
         public IEnumerable<Students> GetListOfStudents()

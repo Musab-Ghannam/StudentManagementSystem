@@ -1,7 +1,9 @@
-﻿using StudentManagementSystem.Autharization;
+﻿using Microsoft.Build.Framework.XamlTypes;
+using StudentManagementSystem.Autharization;
 using StudentManagementSystem.Models;
 using StudentManagementSystem.Service.Services;
 using System;
+using System.IO;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -57,6 +59,7 @@ namespace StudentManagementSystem.Controllers
         {
             try
             {
+                CheckModelState();
                 if (ModelState.IsValid)
                 {
                     var studentExist = _homeService.GetStudentById(studentModelUpdate.StudentNumber);
@@ -107,14 +110,36 @@ namespace StudentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(StudentModelCreate studentModelCraete)
+        public ActionResult Create(StudentModelCreate studentModelCreate)
         {
             try
             {
+            
+                CheckModelState();
+
                 if (ModelState.IsValid)
                 {
+                    if (studentModelCreate.Pic != null && studentModelCreate.Pic.ContentLength > 0)
+                    {
+                        string fileExtension = Path.GetExtension(studentModelCreate.Pic.FileName).ToLower();
+                        string fileName = Guid.NewGuid().ToString() + fileExtension;
 
-                    var studentDTO = StudentModelCreate.ToDTO(studentModelCraete);
+                        string uploadDirectory = Server.MapPath("~/Uploads/Images");
+                        if (!Directory.Exists(uploadDirectory))
+                        {
+                            Directory.CreateDirectory(uploadDirectory);
+                        }
+
+                        // Full path to save the image
+                        string filePath = Path.Combine(uploadDirectory, fileName);
+
+       
+                        studentModelCreate.Pic.SaveAs(filePath);
+
+                        studentModelCreate.StudentPic = "/Uploads/Images/" + fileName;
+
+                    }
+                    var studentDTO = StudentModelCreate.ToDTO(studentModelCreate);
                     bool isCreated = _homeService.CraeteStudent(studentDTO);
                     if (isCreated)
                     {
@@ -127,7 +152,7 @@ namespace StudentManagementSystem.Controllers
                         return View(studentDTO);
                     }
                 }
-                return View(studentModelCraete);
+                return View(studentModelCreate);
 
             }
             catch (Exception ex)
@@ -187,5 +212,26 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
         #endregion
+
+        private void CheckModelState()
+        {
+            if (!ModelState.IsValid)
+            {
+                // Iterate over each ModelState entry (field)
+                foreach (var item in ModelState)
+                {
+                    // Check if the field has any errors
+                    if (item.Value.Errors.Count > 0)
+                    {
+                        // Iterate over each error associated with the field
+                        foreach (var error in item.Value.Errors)
+                        {
+                            // Show each error message
+                            ShowErrorMessage($"Error in {item.Key}: {error.ErrorMessage}");
+                        }
+                    }
+                }
+            }
+        }
     }
 }

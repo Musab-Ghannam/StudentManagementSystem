@@ -22,7 +22,7 @@
           <Property Name="StudentNumber" Type="uniqueidentifier" Nullable="false" />
           <Property Name="StudentNameArabic" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="StudentNameEnglish" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="StudentPicture" Type="varbinary(max)" />
+          <Property Name="StudentPicture" Type="varchar" MaxLength="255" />
           <Property Name="DateOfBirth" Type="date" Nullable="false" />
           <Property Name="TawjehiAverage" Type="decimal" Precision="5" Scale="2" Nullable="false" />
           <Property Name="SchoolName" Type="nvarchar" MaxLength="100" Nullable="false" />
@@ -60,6 +60,10 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="AuthenticatedUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Username" Type="nvarchar" Mode="In" />
+          <Parameter Name="PasswordHash" Type="nvarchar" Mode="In" />
+        </Function>
         <EntityContainer Name="StudentManagementSystemModelStoreContainer">
           <EntitySet Name="StudentAttachments" EntityType="Self.StudentAttachments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Students" EntityType="Self.Students" Schema="dbo" store:Type="Tables" />
@@ -79,6 +83,7 @@
             <PropertyRef Name="AttachmentID" />
           </Key>
           <Property Name="AttachmentID" Type="Guid" Nullable="false" />
+          <Property Name="StudentNumber" Type="Guid" Nullable="false" />
           <Property Name="FileName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="FileData" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="UploadedAt" Type="DateTime" Precision="3" />
@@ -91,7 +96,7 @@
           <Property Name="StudentNumber" Type="Guid" Nullable="false" />
           <Property Name="StudentNameArabic" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="StudentNameEnglish" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="StudentPicture" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="StudentPicture" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="DateOfBirth" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="TawjehiAverage" Type="Decimal" Precision="5" Scale="2" Nullable="false" />
           <Property Name="SchoolName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
@@ -121,8 +126,16 @@
             <OnDelete Action="Cascade" />
           </End>
           <End Role="StudentAttachments" Type="Self.StudentAttachments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Students">
+              <PropertyRef Name="StudentNumber" />
+            </Principal>
+            <Dependent Role="StudentAttachments">
+              <PropertyRef Name="StudentNumber" />
+            </Dependent>
+          </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="StudentManagementSystemEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="StudentManagementSystemEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="StudentAttachments" EntityType="Self.StudentAttachments" />
           <EntitySet Name="Students" EntityType="Self.Students" />
           <EntitySet Name="Users" EntityType="Self.Users" />
@@ -130,17 +143,32 @@
             <End Role="Students" EntitySet="Students" />
             <End Role="StudentAttachments" EntitySet="StudentAttachments" />
           </AssociationSet>
+          <FunctionImport Name="AuthenticatedUser" ReturnType="Collection(StudentManagementSystemModel.AuthenticatedUser_Result)">
+            <Parameter Name="Username" Mode="In" Type="String" />
+            <Parameter Name="PasswordHash" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
+        <ComplexType Name="AuthenticatedUser_Result">
+          <Property Type="Guid" Name="UserID" Nullable="false" />
+          <Property Type="String" Name="Username" Nullable="false" MaxLength="50" />
+          <Property Type="String" Name="FullName" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="Email" Nullable="false" MaxLength="100" />
+          <Property Type="String" Name="PasswordHash" Nullable="false" MaxLength="255" />
+          <Property Type="DateTime" Name="CreatedAt" Nullable="true" Precision="23" />
+          <Property Type="DateTime" Name="LastLoginAt" Nullable="true" Precision="23" />
+          <Property Type="Boolean" Name="IsActive" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="StudentManagementSystemModelStoreContainer" CdmEntityContainer="StudentManagementSystemEntities">
+        <EntityContainerMapping StorageEntityContainer="StudentManagementSystemModelStoreContainer" CdmEntityContainer="StudentManagementSystemEntities1">
           <EntitySetMapping Name="StudentAttachments">
             <EntityTypeMapping TypeName="StudentManagementSystemModel.StudentAttachments">
               <MappingFragment StoreEntitySet="StudentAttachments">
                 <ScalarProperty Name="AttachmentID" ColumnName="AttachmentID" />
+                <ScalarProperty Name="StudentNumber" ColumnName="StudentNumber" />
                 <ScalarProperty Name="FileName" ColumnName="FileName" />
                 <ScalarProperty Name="FileData" ColumnName="FileData" />
                 <ScalarProperty Name="UploadedAt" ColumnName="UploadedAt" />
@@ -180,14 +208,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="FK__StudentAt__Stude__45F365D3" TypeName="StudentManagementSystemModel.FK__StudentAt__Stude__45F365D3" StoreEntitySet="StudentAttachments">
-            <EndProperty Name="Students">
-              <ScalarProperty Name="StudentNumber" ColumnName="StudentNumber" />
-            </EndProperty>
-            <EndProperty Name="StudentAttachments">
-              <ScalarProperty Name="AttachmentID" ColumnName="AttachmentID" />
-            </EndProperty>
-          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="AuthenticatedUser" FunctionName="StudentManagementSystemModel.Store.AuthenticatedUser">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="StudentManagementSystemModel.AuthenticatedUser_Result">
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="LastLoginAt" ColumnName="LastLoginAt" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -203,7 +237,7 @@
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="false" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
         <DesignerProperty Name="UseLegacyProvider" Value="false" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
       </DesignerInfoPropertySet>

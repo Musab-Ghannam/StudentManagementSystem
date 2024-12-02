@@ -12,11 +12,13 @@ namespace StudentManagementSystem.Repository
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
-    public partial class StudentManagementSystemEntities : DbContext
+    public partial class StudentManagementSystemEntities1 : DbContext
     {
-        public StudentManagementSystemEntities()
-            : base("name=StudentManagementSystemEntities")
+        public StudentManagementSystemEntities1()
+            : base("name=StudentManagementSystemEntities1")
         {
         }
     
@@ -28,5 +30,18 @@ namespace StudentManagementSystem.Repository
         public virtual DbSet<StudentAttachments> StudentAttachments { get; set; }
         public virtual DbSet<Students> Students { get; set; }
         public virtual DbSet<Users> Users { get; set; }
+    
+        public virtual ObjectResult<AuthenticatedUser_Result> AuthenticatedUser(string username, string passwordHash)
+        {
+            var usernameParameter = username != null ?
+                new ObjectParameter("Username", username) :
+                new ObjectParameter("Username", typeof(string));
+    
+            var passwordHashParameter = passwordHash != null ?
+                new ObjectParameter("PasswordHash", passwordHash) :
+                new ObjectParameter("PasswordHash", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<AuthenticatedUser_Result>("AuthenticatedUser", usernameParameter, passwordHashParameter);
+        }
     }
 }

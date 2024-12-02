@@ -17,7 +17,7 @@ namespace StudentManagementSystem.Service.DTO
         public int PhysicsGrade { get; set; }
         public int MathGrade { get; set; }
         public string NationalNum { get; set; }
-        public byte[] pic { get; set; }
+        public string pic { get; set; }
 
         public static StudentDTO ToDTO(Students student)
         {
@@ -38,7 +38,7 @@ namespace StudentManagementSystem.Service.DTO
             };
         }
 
-        public static Students ToEntity(StudentDTO student)
+        public static Students ToEntity(StudentDTO student) 
         {
             return new Students
             {

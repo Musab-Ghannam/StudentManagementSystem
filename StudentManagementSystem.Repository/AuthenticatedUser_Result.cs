@@ -10,16 +10,16 @@
 namespace StudentManagementSystem.Repository
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class StudentAttachments
+    public partial class AuthenticatedUser_Result
     {
-        public System.Guid AttachmentID { get; set; }
-        public System.Guid StudentNumber { get; set; }
-        public string FileName { get; set; }
-        public byte[] FileData { get; set; }
-        public Nullable<System.DateTime> UploadedAt { get; set; }
-    
-        public virtual Students Students { get; set; }
+        public System.Guid UserID { get; set; }
+        public string Username { get; set; }
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string PasswordHash { get; set; }
+        public Nullable<System.DateTime> CreatedAt { get; set; }
+        public Nullable<System.DateTime> LastLoginAt { get; set; }
+        public Nullable<bool> IsActive { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace StudentManagementSystem.Repository
         public System.Guid StudentNumber { get; set; }
         public string StudentNameArabic { get; set; }
         public string StudentNameEnglish { get; set; }
-        public byte[] StudentPicture { get; set; }
+        public string StudentPicture { get; set; }
         public System.DateTime DateOfBirth { get; set; }
         public decimal TawjehiAverage { get; set; }
         public string SchoolName { get; set; }

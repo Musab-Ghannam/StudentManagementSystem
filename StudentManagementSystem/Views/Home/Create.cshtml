@@ -9,7 +9,7 @@
     <div class="container">
         <h2>Edit Student</h2>
 
-        @using (Html.BeginForm("Create", "Home", FormMethod.Post))
+        @using (Html.BeginForm("Create", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
 
@@ -56,6 +56,12 @@
                 <div class="col-md-6 form-group">
                     <label for="schoolName">Student Name Arabic</label>
                     <input type="text" id="StudentNameArabic" class="form-control" name="StudentNameArabic" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <label for="StudentPicture">Student Picture</label>
+                    <input type="file" id="Pic" class="form-control" name="Pic" accept="image/*" />
                 </div>
             </div>
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
